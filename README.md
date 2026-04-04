@@ -4,6 +4,17 @@ Experiments and tooling for cloud, containers, and infrastructure.
 
 Upstream: [github.com/sanjeev0120test/engineering-lab](https://github.com/sanjeev0120test/engineering-lab)
 
+## Repository files (what must be pushed vs optional)
+
+| File | Required? | Purpose |
+|------|-----------|---------|
+| `README.md`, `LICENSE`, `.gitignore` | **Yes** (standard practice) | Explain the project, license, and shared ignore rules. |
+| `.gitattributes` | **No** (nice-to-have) | Normalizes line endings (`LF` for most files; `CRLF` for `.bat`/`.cmd`/`.ps1`). Correct for a cross-platform repo. |
+| `.editorconfig` | **No** (nice-to-have) | Hints for editors (charset, indentation). Does not affect builds; safe and conventional. |
+| `.env.example` | **No** (nice-to-have) | Documents **names** of env vars only (no secrets). Kept in git on purpose; real values go in gitignored `.env` or `~/.aws`. |
+
+You do **not** have to delete the optional files—they are small, correct, and help anyone who clones the repo.
+
 ## Prerequisites
 
 Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) or vendor installers):
