@@ -7,22 +7,15 @@
         "Authorization": "Bearer YOUR_GITHUB_PAT"
       }
     },
-    "aws-api": {
-      "disabled": true,
+    "aws-mcp": {
       "timeout": 600,
-      "type": "stdio",
-      "command": "uv",
+      "command": "uvx",
       "args": [
-        "tool",
-        "run",
-        "--from",
-        "awslabs.aws-api-mcp-server@latest",
-        "awslabs.aws-api-mcp-server.exe"
-      ],
-      "env": {
-        "AWS_REGION": "us-east-1",
-        "FASTMCP_LOG_LEVEL": "ERROR"
-      }
+        "mcp-proxy-for-aws@latest",
+        "https://aws-mcp.us-east-1.api.aws/mcp",
+        "--metadata",
+        "AWS_REGION=us-east-1"
+      ]
     }
   }
 }
