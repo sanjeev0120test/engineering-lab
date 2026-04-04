@@ -20,6 +20,7 @@ Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/window
 | Helm | Kubernetes packages |
 | kind | Local Kubernetes clusters |
 | [Gitleaks](https://github.com/gitleaks/gitleaks) | Local secret scanning in repo and history |
+| [uv](https://docs.astral.sh/uv/) | Python tool runner (AWS Documentation / AWS API MCP servers) |
 
 Verify versions:
 
@@ -36,6 +37,7 @@ kubectl version --client
 helm version
 kind --version
 gitleaks version
+uv --version
 ```
 
 If `terraform version` shows `windows_386`, an older 32-bit `terraform.exe` earlier on your `PATH` is shadowing the correct build. Remove or rename it so the `windows_amd64` binary from winget is used.
@@ -46,6 +48,19 @@ If `terraform version` shows `windows_386`, an older 32-bit `terraform.exe` earl
 git clone https://github.com/sanjeev0120test/engineering-lab.git
 cd engineering-lab
 ```
+
+## Cursor MCP (optional)
+
+This repo includes a starter [`.cursor/mcp.json`](.cursor/mcp.json) with **official** servers only:
+
+| Server | Source | Notes |
+|--------|--------|--------|
+| **github** | [github/github-mcp-server](https://github.com/github/github-mcp-server) (remote) | Replace `YOUR_GITHUB_PAT` with a [fine-grained or classic PAT](https://github.com/settings/personal-access-tokens). Requires Cursor with Streamable HTTP support. **Never commit a real token**—use a placeholder in git; keep secrets in user-level config if you prefer. |
+| **aws-knowledge** | [awslabs/mcp](https://github.com/awslabs/mcp) — managed endpoint | Remote AWS Knowledge MCP (`https://knowledge-mcp.global.api.aws`). |
+| **aws-documentation** | [awslabs/mcp](https://github.com/awslabs/mcp) | Runs locally via [`uv`](https://docs.astral.sh/uv/); install with `winget install astral-sh.uv` (or see Astral docs). |
+| **aws-api** | [awslabs/mcp](https://github.com/awslabs/mcp) | **Disabled by default.** Uses your [AWS CLI credential chain](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). Set `"disabled": false` when ready; narrow IAM permissions to what you need. |
+
+**Global vs project:** Cursor reads **`%USERPROFILE%\.cursor\mcp.json`** for all workspaces, or **`.cursor/mcp.json`** in a project for that repo only. Copy or merge this file into either location, then restart Cursor. See GitHub’s [Cursor install guide](https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md) and the [awslabs/mcp](https://github.com/awslabs/mcp) README for Windows `uv` patterns and more servers.
 
 ## Secrets and local-only configuration
 
