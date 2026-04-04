@@ -1,0 +1,83 @@
+# Secrets and local env (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*_rsa
+*_ed25519
+.aws/credentials
+.aws/config
+kubeconfig
+*.kubeconfig
+*.tfvars
+!*.tfvars.example
+secrets.yaml
+**/secrets/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# Java / JVM
+target/
+*.class
+.gradle/
+build/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Docker (local overrides)
+docker-compose.override.yml
+
+# Logs and temp
+*.log
+tmp/
+temp/
+.cache/
+
+# Coverage / test artifacts
+coverage/
+.coverage
+htmlcov/
+*.cover
