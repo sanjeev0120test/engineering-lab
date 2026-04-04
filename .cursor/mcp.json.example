@@ -8,7 +8,7 @@
     },
     "aws-api": {
       "disabled": true,
-      "timeout": 120,
+      "timeout": 600,
       "type": "stdio",
       "command": "uv",
       "args": [
