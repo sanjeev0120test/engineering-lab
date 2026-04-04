@@ -2,8 +2,6 @@
 
 Experiments and tooling for cloud, containers, and infrastructure.
 
-Upstream: [github.com/sanjeev0120test/engineering-lab](https://github.com/sanjeev0120test/engineering-lab)
-
 ## Prerequisites
 
 Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) or vendor installers):
