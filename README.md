@@ -21,6 +21,7 @@ Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/window
 | kubectl | Kubernetes |
 | Helm | Kubernetes packages |
 | kind | Local Kubernetes clusters |
+| [Gitleaks](https://github.com/gitleaks/gitleaks) | Local secret scanning in repo and history |
 
 Verify versions:
 
@@ -36,7 +37,10 @@ gh --version
 kubectl version --client
 helm version
 kind --version
+gitleaks version
 ```
+
+If `terraform version` shows `windows_386`, an older 32-bit `terraform.exe` earlier on your `PATH` is shadowing the correct build. Remove or rename it so the `windows_amd64` binary from winget is used.
 
 ## Clone and work locally
 
@@ -45,9 +49,12 @@ git clone https://github.com/sanjeev0120test/engineering-lab.git
 cd engineering-lab
 ```
 
-## Secrets
+## Secrets and local-only configuration
 
-Do not commit API keys, tokens, or cloud credentials. Use `.env` locally (see `.env.example`); `.env` is gitignored. Prefer [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) for Git HTTPS auth.
+- **Parameterized values:** Put secrets and environment-specific values in `.env` (see [`.env.example`](.env.example)), `*.tfvars`, or your OS user profile (`~/.aws`, etc.). Those paths are covered by [`.gitignore`](.gitignore).
+- **Git / GitHub:** Use [Git Credential Manager](https://github.com/git-ecosystem/git-credential-manager) or `gh auth login` — do not embed tokens in remote URLs or committed files.
+- **Terraform:** Commit `.terraform.lock.hcl` when you add Terraform code; keep `terraform.tfstate` and `*.auto.tfvars` local (ignored).
+- **Scan before push:** From the repo root, run `gitleaks detect -v` to check tracked files and git history for accidental secrets.
 
 ## License
 

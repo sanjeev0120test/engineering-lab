@@ -42,6 +42,15 @@ ENV/
 dist/
 build/
 
+# Local shell / auth (never commit)
+.netrc
+.envrc
+.direnv/
+
+# Certificates / keystores
+*.pfx
+*.p12
+
 # Node
 node_modules/
 npm-debug.log*
@@ -55,9 +64,8 @@ target/
 .gradle/
 build/
 
-# Terraform
+# Terraform (commit .terraform.lock.hcl for reproducible provider versions)
 .terraform/
-.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log
