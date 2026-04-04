@@ -28,6 +28,9 @@ Desktop.ini
 # Editors / IDEs
 .idea/
 .vscode/
+# Cursor MCP (local secrets); copy from .cursor/mcp.json.example
+.cursor/mcp.json
+!.cursor/mcp.json.example
 *.swp
 *.swo
 *~
