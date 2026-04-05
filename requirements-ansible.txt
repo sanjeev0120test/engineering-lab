@@ -1,5 +1,6 @@
-# Ansible stack for WSL (recommended on Windows). After: wsl
-#   cd /path/to/repo && python3 -m venv .venv-wsl && source .venv-wsl/bin/activate
+# Ansible controller (venv — not committed): macOS/Linux use .venv/ ; Windows WSL use .venv-wsl/
+# After creating the venv and activating:
+#   python -m pip install --upgrade pip
 #   pip install -r requirements-ansible.txt
 #   ansible-galaxy collection install -r ansible/collections.yml
 ansible-core>=2.16,<2.20

@@ -2,6 +2,17 @@
 
 Experiments and tooling for cloud, containers, and infrastructure automation.
 
+## Quick start: Ansible locally (macOS vs Windows)
+
+| Step | macOS / Linux (native) | Windows (PowerShell + WSL) |
+|------|------------------------|----------------------------|
+| 1. Clone | `git clone … && cd engineering-lab` | Same |
+| 2. One-time venv + deps | See [Ansible on macOS](#ansible-on-macos-and-native-linux) (`.venv/`) | See [Ansible on WSL](#ansible-on-wsl-windows) (`.venv-wsl/` inside WSL) |
+| 3. Run tools | `./scripts/ansible-macos.sh ansible --version` | `.\scripts\ansible-wsl.ps1 ansible --version` |
+| 4. Lint (optional) | `./scripts/ansible-macos.sh ansible-lint .` | `.\scripts\ansible-wsl.ps1 ansible-lint .` |
+
+**Rule of thumb:** Ansible runs **inside** a Python virtualenv; this repo never commits the venv. Controllers: **native shell** on Mac/Linux, **WSL Linux** on Windows (not Windows Python for playbooks).
+
 ## Repository layout
 
 | Path | Purpose |
@@ -78,6 +89,7 @@ From the repository root in **Terminal** (bash/zsh):
 # If ./scripts/ansible-macos.sh is not executable: chmod +x scripts/ansible-macos.sh
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements-ansible.txt
 ansible-galaxy collection install -r ansible/collections.yml
 deactivate
@@ -104,6 +116,7 @@ Ansible is most reliable on Windows when the **controller** runs inside **WSL** 
 ```bash
 python3 -m venv .venv-wsl
 source .venv-wsl/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements-ansible.txt
 ansible-galaxy collection install -r ansible/collections.yml
 ```
@@ -115,7 +128,20 @@ ansible-galaxy collection install -r ansible/collections.yml
 .\scripts\ansible-wsl.ps1 ansible-lint .
 ```
 
-Adjust `-d Ubuntu` in the script if your default WSL distro name differs.
+Use `-Distro <Name>` if your distribution is not `Ubuntu` (list distros: `wsl -l -v`). Example: `.\scripts\ansible-wsl.ps1 -Distro Debian ansible --version`.
+
+**Requirements:** Repository must live on a **drive letter path** (e.g. `C:\dev\...`). UNC (`\\server\share`) paths are not supported by this script. The WSL path must exist at `/mnt/<drive>/...`.
+
+## Troubleshooting (Ansible / local dev)
+
+| Symptom | What to check |
+|--------|----------------|
+| `python3: command not found` (Mac) | Install Xcode Command Line Tools (`xcode-select --install`) or `brew install python`. |
+| `Missing virtualenv` when running helper | Complete the one-time venv + `pip install` + `ansible-galaxy collection install` for your OS (see tables above). |
+| `ansible-galaxy collection install` fails | Upgrade pip first; check TLS/proxy; verify [Galaxy](https://galaxy.ansible.com/) is reachable. Collections listed in [`ansible/collections.yml`](ansible/collections.yml) must exist on Galaxy (e.g. `ansible.utils`, `ansible.mcp`). |
+| WSL script errors on path | Use a checkout under `C:\` (or `D:\` etc.), not a UNC path. |
+| Wrong WSL distro | Run `wsl -l -v`, then pass `-Distro <ExactName>` to `ansible-wsl.ps1`. |
+| Line endings on Windows | Shell scripts use LF per [`.gitattributes`](.gitattributes); clone with `core.autocrlf` left to Git defaults for your platform. |
 
 ## Cursor IDE: MCP and rules (global only)
 

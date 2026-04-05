@@ -9,6 +9,12 @@ VENV="${REPO_ROOT}/.venv"
 ACTIVATE="${VENV}/bin/activate"
 
 if [[ ! -f "${ACTIVATE}" ]]; then
+  if ! command -v python3 >/dev/null 2>&1; then
+    cat >&2 <<EOF
+python3 not found on PATH. Install Python 3 (e.g. Xcode CLT: xcode-select --install, or Homebrew: brew install python) and retry.
+EOF
+    exit 1
+  fi
   cat >&2 <<EOF
 Missing virtualenv: ${VENV}
 
@@ -17,6 +23,7 @@ From the repository root, run once:
   cd ${REPO_ROOT}
   python3 -m venv .venv
   source .venv/bin/activate
+  python -m pip install --upgrade pip
   pip install -r requirements-ansible.txt
   ansible-galaxy collection install -r ansible/collections.yml
 
