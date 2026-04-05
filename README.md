@@ -24,7 +24,7 @@ Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/window
 | Docker | Containers; required for kind |
 | Terraform | Infrastructure as code |
 | AWS CLI v2 | AWS API |
-| GitHub CLI (`gh`) | GitHub from the terminal |
+| GitHub CLI (gh) | GitHub from the terminal |
 | kubectl | Kubernetes |
 | Helm | Kubernetes packages |
 | kind | Local Kubernetes clusters |
