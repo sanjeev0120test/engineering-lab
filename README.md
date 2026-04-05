@@ -75,7 +75,7 @@ Use a **local virtualenv** at `.venv/` (gitignored). [`scripts/ansible-macos.sh`
 From the repository root in **Terminal** (bash/zsh):
 
 ```bash
-chmod +x scripts/ansible-macos.sh
+# If ./scripts/ansible-macos.sh is not executable: chmod +x scripts/ansible-macos.sh
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-ansible.txt
