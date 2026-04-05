@@ -7,19 +7,34 @@ Experiments and tooling for cloud, containers, and infrastructure automation.
 | Path | Purpose |
 |------|---------|
 | [`ansible/`](ansible/) | Ansible Galaxy collections manifest (`collections.yml`) |
-| [`scripts/`](scripts/) | Cross-platform helpers (e.g. WSL Ansible runner) |
-| [`requirements-ansible.txt`](requirements-ansible.txt) | Python pins for Ansible Core and `ansible-lint` (WSL venv) |
+| [`scripts/`](scripts/) | Helpers: [`ansible-macos.sh`](scripts/ansible-macos.sh) (macOS / native Linux), [`ansible-wsl.ps1`](scripts/ansible-wsl.ps1) (Windows + WSL) |
+| [`requirements-ansible.txt`](requirements-ansible.txt) | Python pins for Ansible Core and `ansible-lint` (install into a local venv — not committed) |
 | [`iam/`](iam/) | IAM-related material (as present on `main`) |
+
+**Virtualenv locations (all gitignored):**
+
+| OS | Path | Used by |
+|----|------|---------|
+| macOS / Linux (native) | `.venv/` | [`scripts/ansible-macos.sh`](scripts/ansible-macos.sh) |
+| Windows (WSL) | `.venv-wsl/` | [`scripts/ansible-wsl.ps1`](scripts/ansible-wsl.ps1) |
 
 ## Prerequisites
 
-Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) or vendor installers):
+### Windows
+
+Install via [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) or vendor installers.
+
+### macOS
+
+Install via [Homebrew](https://brew.sh/) where applicable (`brew install python`, `brew install --cask docker`, etc.), or use vendor installers. **Python 3** must be available as `python3` (Xcode Command Line Tools or Homebrew).
+
+### Toolchain
 
 | Tool | Role |
 |------|------|
 | Git | Version control |
 | Node.js | JavaScript / tooling |
-| Python 3 | Scripts / automation; Ansible controller (WSL) |
+| Python 3 | Scripts / automation; Ansible controller |
 | Java | JVM projects (optional) |
 | Docker | Containers; required for kind |
 | Terraform | Infrastructure as code |
@@ -32,26 +47,56 @@ Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/window
 
 Verify versions:
 
-```powershell
+```bash
 git --version
 node --version
-python --version
+python3 --version
 java -version
 docker --version
 terraform -version
 aws --version
-gh --version
+gh version
 kubectl version --client
 helm version
 kind --version
 gitleaks version
 ```
 
+On **Windows PowerShell** you can use the same commands, or `python` instead of `python3` if that is how Python is exposed on your PATH.
+
 If `terraform version` shows `windows_386`, an older 32-bit `terraform.exe` earlier on your `PATH` is shadowing the correct build. Remove or rename it so the `windows_amd64` binary from winget is used.
+
+## Ansible on macOS (and native Linux)
+
+Use a **local virtualenv** at `.venv/` (gitignored). [`scripts/ansible-macos.sh`](scripts/ansible-macos.sh) activates it and runs your command from the **repository root**, so Ansible resolves paths and config consistently.
+
+### One-time setup
+
+From the repository root in **Terminal** (bash/zsh):
+
+```bash
+chmod +x scripts/ansible-macos.sh
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-ansible.txt
+ansible-galaxy collection install -r ansible/collections.yml
+deactivate
+```
+
+### Day-to-day
+
+```bash
+./scripts/ansible-macos.sh ansible --version
+./scripts/ansible-macos.sh ansible-lint .
+./scripts/ansible-macos.sh ansible-playbook -i inventory playbook.yml
+```
+
+- With **no arguments**, the script opens an interactive shell (`$SHELL`, default `/bin/zsh` on macOS) with the venv activated.
+- The same script works on **Linux** (non-WSL) if you use `.venv/` the same way.
 
 ## Ansible on WSL (Windows)
 
-Ansible is most reliable on Windows when the **controller** runs inside **WSL** (Linux) with a dedicated virtual environment. This repo does **not** commit the venv (`.venv-wsl/` is gitignored).
+Ansible is most reliable on Windows when the **controller** runs inside **WSL** (Linux) with a dedicated virtual environment at `.venv-wsl/` (gitignored).
 
 1. Open WSL (e.g. Ubuntu), `cd` to this repository clone (Linux path under `/mnt/...`).
 2. Create and activate a venv, install Python deps, install collections:
@@ -63,7 +108,7 @@ pip install -r requirements-ansible.txt
 ansible-galaxy collection install -r ansible/collections.yml
 ```
 
-3. From **PowerShell** at the repo root on Windows, you can delegate to that venv via [`scripts/ansible-wsl.ps1`](scripts/ansible-wsl.ps1):
+3. From **PowerShell** at the repo root on Windows, delegate to that venv via [`scripts/ansible-wsl.ps1`](scripts/ansible-wsl.ps1):
 
 ```powershell
 .\scripts\ansible-wsl.ps1 ansible --version
@@ -76,16 +121,18 @@ Adjust `-d Ubuntu` in the script if your default WSL distro name differs.
 
 This repository does **not** ship a per-project `mcp.json`. Configure MCP once in your **user** Cursor directory so it applies to every workspace:
 
-- **Windows:** `%USERPROFILE%\.cursor\mcp.json`
-- **Linux / macOS:** `~/.cursor/mcp.json`
+| OS | MCP config | Rules (`.mdc`) |
+|----|------------|----------------|
+| Windows | `%USERPROFILE%\.cursor\mcp.json` | `%USERPROFILE%\.cursor\rules\` |
+| macOS / Linux | `~/.cursor/mcp.json` | `~/.cursor/rules/` |
 
-Keep secrets out of git: the real file stays on your machine; do not copy it into this repo or commit tokens.
+Keep secrets out of git: the real MCP file stays on your machine; do not copy it into this repo or commit tokens.
 
-**Cursor rules** (team standards, security, AWS cost guardrails) live under `%USERPROFILE%\.cursor\rules\` as `.mdc` files with `alwaysApply: true`. Do not duplicate project-level `.cursor/rules/` unless you have a deliberate exception for one repository.
+**Cursor rules** use `alwaysApply: true` in frontmatter. Do not add project-level `.cursor/rules/` unless you have a deliberate exception for one repository.
 
 ## Clone and work locally
 
-```powershell
+```bash
 git clone https://github.com/sanjeev0120test/engineering-lab.git
 cd engineering-lab
 ```
