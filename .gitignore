@@ -28,9 +28,8 @@ Desktop.ini
 # Editors / IDEs
 .idea/
 .vscode/
-# Cursor MCP (local secrets); copy from .cursor/mcp.json.example
+# Cursor: real MCP config lives in the user profile only (never commit repo-local mcp.json)
 .cursor/mcp.json
-!.cursor/mcp.json.example
 *.swp
 *.swo
 *~
@@ -41,6 +40,7 @@ __pycache__/
 *$py.class
 .Python
 .venv/
+.venv-wsl/
 venv/
 ENV/
 .pytest_cache/

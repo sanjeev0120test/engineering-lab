@@ -1,6 +1,15 @@
 # engineering-lab
 
-Experiments and tooling for cloud, containers, and infrastructure.
+Experiments and tooling for cloud, containers, and infrastructure automation.
+
+## Repository layout
+
+| Path | Purpose |
+|------|---------|
+| [`ansible/`](ansible/) | Ansible Galaxy collections manifest (`collections.yml`) |
+| [`scripts/`](scripts/) | Cross-platform helpers (e.g. WSL Ansible runner) |
+| [`requirements-ansible.txt`](requirements-ansible.txt) | Python pins for Ansible Core and `ansible-lint` (WSL venv) |
+| [`iam/`](iam/) | IAM-related material (as present on `main`) |
 
 ## Prerequisites
 
@@ -10,7 +19,7 @@ Typical toolchain (install via [winget](https://learn.microsoft.com/en-us/window
 |------|------|
 | Git | Version control |
 | Node.js | JavaScript / tooling |
-| Python 3 | Scripts / automation |
+| Python 3 | Scripts / automation; Ansible controller (WSL) |
 | Java | JVM projects (optional) |
 | Docker | Containers; required for kind |
 | Terraform | Infrastructure as code |
@@ -39,6 +48,40 @@ gitleaks version
 ```
 
 If `terraform version` shows `windows_386`, an older 32-bit `terraform.exe` earlier on your `PATH` is shadowing the correct build. Remove or rename it so the `windows_amd64` binary from winget is used.
+
+## Ansible on WSL (Windows)
+
+Ansible is most reliable on Windows when the **controller** runs inside **WSL** (Linux) with a dedicated virtual environment. This repo does **not** commit the venv (`.venv-wsl/` is gitignored).
+
+1. Open WSL (e.g. Ubuntu), `cd` to this repository clone (Linux path under `/mnt/...`).
+2. Create and activate a venv, install Python deps, install collections:
+
+```bash
+python3 -m venv .venv-wsl
+source .venv-wsl/bin/activate
+pip install -r requirements-ansible.txt
+ansible-galaxy collection install -r ansible/collections.yml
+```
+
+3. From **PowerShell** at the repo root on Windows, you can delegate to that venv via [`scripts/ansible-wsl.ps1`](scripts/ansible-wsl.ps1):
+
+```powershell
+.\scripts\ansible-wsl.ps1 ansible --version
+.\scripts\ansible-wsl.ps1 ansible-lint .
+```
+
+Adjust `-d Ubuntu` in the script if your default WSL distro name differs.
+
+## Cursor IDE: MCP and rules (global only)
+
+This repository does **not** ship a per-project `mcp.json`. Configure MCP once in your **user** Cursor directory so it applies to every workspace:
+
+- **Windows:** `%USERPROFILE%\.cursor\mcp.json`
+- **Linux / macOS:** `~/.cursor/mcp.json`
+
+Keep secrets out of git: the real file stays on your machine; do not copy it into this repo or commit tokens.
+
+**Cursor rules** (team standards, security, AWS cost guardrails) live under `%USERPROFILE%\.cursor\rules\` as `.mdc` files with `alwaysApply: true`. Do not duplicate project-level `.cursor/rules/` unless you have a deliberate exception for one repository.
 
 ## Clone and work locally
 
